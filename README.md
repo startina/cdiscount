@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## 修正Cdiscount部分bug并添加多账号功能
 * 修正了 Sdk\Soap\Fulfilment\Response\GetFulfilmentSupplyOrderResponse line:128 ProductEan 参数大小写导致获取不到参数问题
 * 修正了 Sdk\Soap\Offer\Response\GetOfferListGenericResponse OfferState参数获取  line:131 $offer->setOfferState($offerXML['OfferState']);
@@ -92,3 +93,7 @@ Erase the vendor folder with the new one
 
 ## Notes
 In the sample, the parametrer error_reporting is set to '-1'. Do not let it in production mode.
+=======
+# cdiscount
+修复cdiscount官方包以及添加多账号登录功能
+>>>>>>> 9ea2a874765af81171f672d488d3942062d056db
