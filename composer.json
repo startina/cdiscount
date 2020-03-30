@@ -1,5 +1,5 @@
 {
-    "name": "statina/cdiscount",
+    "name": "startina/cdiscount",
     "description": "PHP SDK for the Cdiscount Marketplace API",
     "type": "project",
     "autoload": {
