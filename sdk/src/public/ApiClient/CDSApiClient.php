@@ -167,7 +167,7 @@ class CDSApiClient
      */
     public function init()
     {
-        $token = Token::getInstance()->getToken($this->username, $this->password, $this->urlToken);
+        $token = Token::getInstance($this->username, $this->password, $this->urlToken)->getToken();
         return $token;
     }
 

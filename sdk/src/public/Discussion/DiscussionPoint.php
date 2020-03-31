@@ -10,10 +10,12 @@ namespace Sdk\Discussion;
 
 use Sdk\ConfigTools\ConfigFileLoader;
 use Sdk\HttpTools\CDSApiSoapRequest;
+use Sdk\Soap\BaliseTool;
 use Sdk\Soap\Common\Body;
 use Sdk\Soap\Common\Envelope;
 use Sdk\Soap\Discussion\ClaimFilterSoap;
 use Sdk\Soap\Discussion\CloseDiscussionList;
+use Sdk\Soap\Discussion\FilterSoap;
 use Sdk\Soap\Discussion\GetOfferQuestionList;
 use Sdk\Soap\Discussion\GetOrderClaimList;
 use Sdk\Soap\Discussion\GetOrderQuestionList;
@@ -113,8 +115,8 @@ class DiscussionPoint
     }
 
     /**
-     * @param $questionList
-     * @param $filterSoap
+     * @param BaliseTool $questionList
+     * @param FilterSoap $filterSoap
      * @param $filter
      * @param $namespaces array string : optionals namespaces
      * @return string

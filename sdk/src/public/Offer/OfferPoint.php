@@ -142,9 +142,9 @@ class OfferPoint
      */
     private function _sendRequest($method, $data)
     {
-        $headerRequestURL = ConfigFileLoader::getInstance()->getConfAttribute('methodurl');
+        $headerRequestURL = 'http://www.cdiscount.com/IMarketplaceAPIService/';
 
-        $apiURL = ConfigFileLoader::getInstance()->getConfAttribute('url');
+        $apiURL = 'https://wsvc.cdiscount.com/MarketplaceAPIService.svc';
 
         $request = new CDSApiSoapRequest($method, $headerRequestURL, $apiURL, $data);
         $response = $request->call();
