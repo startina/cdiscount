@@ -9,6 +9,8 @@
 namespace Sdk\HttpTools;
 
 
+use Sdk\ConfigTools\ConfigFileLoader;
+
 class CDSApiSoapRequest
 {
     /**
@@ -41,8 +43,8 @@ class CDSApiSoapRequest
      */
     public function __construct($method, $headerMethodURL, $apiURL, $data)
     {
-
-        $this->_client = new \Zend\Http\Client($apiURL);
+        $curlTimeout = ConfigFileLoader::getInstance()->getConfAttribute('timeout');
+        $this->_client = new \Zend\Http\Client($apiURL, ['timeout' => $curlTimeout]);
         $this->_client->setMethod('post');
         $this->_client->setRawBody($data);
         $this->_client->setHeaders(array(

@@ -10,6 +10,8 @@
 namespace Sdk\HttpTools;
 
 
+use Sdk\ConfigTools\ConfigFileLoader;
+
 /**
  * Request in order to get a Token
  *
@@ -70,13 +72,14 @@ class CDSApiRequest
      */
     public function __construct($username, $password, $urltoken)
     {
+        $curlTimeout = ConfigFileLoader::getInstance()->getConfAttribute('timeout');
         //$this->_setHttpHeader($username, $password);
 
         $this->_request = new \Zend\Http\Request();
         $this->_request->setUri($urltoken);
         $this->_request->setMethod('GET');
 
-        $this->_client = new \Zend\Http\Client();
+        $this->_client = new \Zend\Http\Client(null, ['timeout' => $curlTimeout]);
         $this->_adapter = new \Zend\Http\Client\Adapter\Curl();
         $this->_client->setAdapter($this->_adapter);
 

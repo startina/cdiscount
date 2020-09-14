@@ -53,7 +53,7 @@ class GetOrderListResponse extends iResponse
     {
         $reader = new \Zend\Config\Reader\Xml();
         $this->_dataResponse = $reader->fromString($response);
-
+        file_put_contents(getcwd().'/log.json', json_encode($this->_dataResponse));
         if ($this->isOperationSuccess($this->_dataResponse['s:Body']['GetOrderListResponse']['GetOrderListResult']))
         {
             $this->_orderList = new OrderList();
@@ -83,7 +83,7 @@ class GetOrderListResponse extends iResponse
     private function _setOrderList()
     {
         $objOrderResult = $this->_dataResponse['s:Body']['GetOrderListResponse']['GetOrderListResult']['OrderList'];
-        
+
         $arrays = false;
         if (isset($objOrderResult['Order'])) {
             $orderResults = $objOrderResult['Order'];
@@ -91,17 +91,14 @@ class GetOrderListResponse extends iResponse
                 $orderResults = array($orderResults);
             }
             foreach ($orderResults as $order) {
-
                 if (is_array($order)) {
                     $orderObj = new Order($order['OrderNumber']);
 
                     if ($order['ArchiveParcelList'] == 'true') {
                         $orderObj->setArchiveParcelList(true);
                     }
-
                     $address = $this->_getAddress($order['BillingAddress']);
                     $orderObj->setBillingAddress($address);
-
                     if (!SoapTools::isSoapValueNull($order['Corporation'])) {
                         $corporation = $this->_getCorporation($order['Corporation']);
                         $orderObj->setCorporation($corporation);
@@ -153,12 +150,10 @@ class GetOrderListResponse extends iResponse
 
                     $parcelList = $this->_getParcelList($order['ParcelList']);
                     $orderObj->setParcelList($parcelList);
-                    
                     if (isset($order['VoucherList']) && !SoapTools::isSoapValueNull($order['VoucherList'])) {
                         $voucherList = $this->_getVoucherList($order['VoucherList']);
                         $orderObj->setVoucherList($voucherList);
                     }
-                    
                     $orderObj->setShippedTotalAmount(floatval($order['ShippedTotalAmount']));
 
                     $orderObj->setShippedTotalShippingCharges(floatval($order['ShippedTotalShippingCharges']));
@@ -195,7 +190,9 @@ class GetOrderListResponse extends iResponse
     private function _getAddress($objAddressResult)
     {
         $address = new Address();
-
+        if (!empty($objAddressResult['nil'])) {
+            return  $address;
+        }
         $address->setAddress1($objAddressResult['Address1']);
         $address->setAddress2($objAddressResult['Address2']);
         $address->setApartmentNumber($objAddressResult['ApartmentNumber']);
@@ -316,7 +313,7 @@ class GetOrderListResponse extends iResponse
             $orderLine->setSkuParent($orderLineListOBJ['SkuParent']);
             $orderLine->setUnitAdditionalShippingCharges(floatval($orderLineListOBJ['UnitAdditionalShippingCharges']));
             $orderLine->setUnitShippingCharges(floatval($orderLineListOBJ['UnitShippingCharges']));
-            
+
             if (isset ($orderLineListOBJ['RefundShippingCharges']) && $orderLineListOBJ['RefundShippingCharges']== 'true') {
                 $orderLine->setRefundShippingCharges(true);
             }
@@ -338,8 +335,8 @@ class GetOrderListResponse extends iResponse
             $parcelObj->setExternalCarrierTrackingUrl($parcel['ExternalCarrierTrackingUrl']);
             if ($parcel['IsCustomerReturn'] == 'true') {
                 $parcelObj->setCustomerReturn(true);
-            } 
-            $parcelObj->setParcelStatus($parcel['ParcelStatus']);           
+            }
+            $parcelObj->setParcelStatus($parcel['ParcelStatus']);
             $parcelObj->setRealCarrierCode($parcel['RealCarrierCode']);
 
             foreach ($parcel['ParcelItemList'] as $parcelItem) {
@@ -350,9 +347,9 @@ class GetOrderListResponse extends iResponse
 
                 $parcelObj->getParcelItemList()->addParcelItem($parcelItemObj);
             }
-            
+
             $trackingList = new TrackingList();
-            
+
             if( isset($parcel['TrackingList']) && !SoapTools::isSoapValueNull($parcel['TrackingList']) ){
                /*
                 * @var \Sdk\Parcel\Tracking $tracking
@@ -376,15 +373,15 @@ class GetOrderListResponse extends iResponse
                     }
                     $trackingList->addTrackingToLit($trackingObj);
                 }
-                $parcelObj->setTrackingList($trackingList); 
+                $parcelObj->setTrackingList($trackingList);
             }
-            
+
             $parcelListObj->addParcel($parcelObj);
         }
 
         return $parcelListObj;
     }
-    
+
     /*
      * @param \Sdk\Order\VoucherList
      * create vouhcer list object
@@ -392,7 +389,7 @@ class GetOrderListResponse extends iResponse
     private function _getVoucherList($voucherList)
     {
         $voucherListObj = new \Sdk\Order\VoucherList();
-        
+
         /*
          * \Sdk\Order\Voucher
          */
@@ -400,16 +397,16 @@ class GetOrderListResponse extends iResponse
             $voucherObj = new \Sdk\Order\Voucher();
 
             if (isset($voucher['CreateDate']) && !SoapTools::isSoapValueNull($voucher['CreateDate'])) {
-               $voucherObj->setCreateDate($voucher['CreateDate']); 
+               $voucherObj->setCreateDate($voucher['CreateDate']);
             }
-            
+
             if (isset($voucher['Source']) && !SoapTools::isSoapValueNull($voucher['Source'])) {
                 $voucherObj->setSource($voucher['Source']);
             }
-            
+
             $refundInfomation = new \Sdk\Order\Refund\RefundInformation();
             if (isset($voucher['RefundInformation']) && !SoapTools::isSoapValueNull($voucher['RefundInformation'])) {
-                
+
                 if (isset($voucher['RefundInformation']['Amount']) && !SoapTools::isSoapValueNull($voucher['RefundInformation']['Amount'])) {
                     $refundInfomation->setAmount($voucher['RefundInformation']['Amount']);
                 }
@@ -419,10 +416,10 @@ class GetOrderListResponse extends iResponse
             }
 
             $voucherObj->setRefundInformation($refundInfomation);
-            
+
             $voucherListObj->addVoucherToList($voucherObj);
         }
-        
+
         return $voucherListObj;
     }
 }
